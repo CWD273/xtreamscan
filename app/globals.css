@@ -1,0 +1,25 @@
+body{
+    background:#0d0d0d;
+    color:white;
+    font-family:Arial,sans-serif;
+    max-width:900px;
+    margin:auto;
+    padding:40px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+}
+
+button{
+    padding:12px 20px;
+    cursor:pointer;
+}
+
+pre{
+    background:#222;
+    padding:20px;
+    overflow:auto;
+}
