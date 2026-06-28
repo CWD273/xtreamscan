@@ -3,60 +3,92 @@
 import { useState } from "react";
 
 export default function Home() {
-  const [server, setServer] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [output, setOutput] = useState("");
 
-  async function generateM3U() {
-    const res = await fetch("/api/generate-m3u", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        server,
-        username,
-        password,
-      }),
-    });
+    const [server,setServer]=useState("");
+    const [username,setUsername]=useState("");
+    const [password,setPassword]=useState("");
+    const [json,setJson]=useState("");
 
-    const text = await res.text();
-    setOutput(text);
-  }
+    async function fetchStreams(){
 
-  return (
-    <main>
-      <h1>Xtream Playlist Generator</h1>
+        const res=await fetch("/api/streams",{
 
-      <input
-        placeholder="Server URL"
-        value={server}
-        onChange={(e) => setServer(e.target.value)}
-      />
+            method:"POST",
 
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
+            headers:{
+                "Content-Type":"application/json"
+            },
 
-      <input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+            body:JSON.stringify({
+                server,
+                username,
+                password
+            })
 
-      <button onClick={generateM3U}>
-        Generate M3U
-      </button>
+        });
 
-      <textarea
-        value={output}
-        readOnly
-        rows={20}
-      />
-    </main>
-  );
+        const text=await res.text();
+
+        setJson(text);
+
+    }
+
+    function download(){
+
+        const blob=new Blob([json],{
+            type:"application/json"
+        });
+
+        const a=document.createElement("a");
+
+        a.href=URL.createObjectURL(blob);
+
+        a.download="streams.json";
+
+        a.click();
+
+    }
+
+    return(
+
+        <main>
+
+            <h1>Xtream JSON Downloader</h1>
+
+            <input
+                placeholder="Server URL"
+                value={server}
+                onChange={e=>setServer(e.target.value)}
+            />
+
+            <input
+                placeholder="Username"
+                value={username}
+                onChange={e=>setUsername(e.target.value)}
+            />
+
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={e=>setPassword(e.target.value)}
+            />
+
+            <button onClick={fetchStreams}>
+                Fetch Streams
+            </button>
+
+            <button
+                onClick={download}
+                style={{marginLeft:20}}
+            >
+                Download JSON
+            </button>
+
+            <pre>{json}</pre>
+
+        </main>
+
+    );
+
 }
